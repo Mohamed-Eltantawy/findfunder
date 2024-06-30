@@ -1,0 +1,30 @@
+<?php
+namespace App\Http\Controllers;
+
+use App\Models\InvestmentRound;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class InvestmentRoundController extends Controller
+{
+    public function index()
+    {
+        $investmentRounds = InvestmentRound::all();
+        return response()->json($investmentRounds);
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'goal_amount' => ['required', 'numeric'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $investmentRound = InvestmentRound::create($request->all());
+        return response()->json(['message' => 'Investment round created successfully', 'investmentRound' => $investmentRound], 201);
+    }
+}

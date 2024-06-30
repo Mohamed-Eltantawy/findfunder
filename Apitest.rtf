@@ -1,0 +1,1380 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2639
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Bold;\f1\froman\fcharset0 Times-Roman;\f2\fmodern\fcharset0 Courier;
+\f3\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;\red179\green179\blue179;
+}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c0\c0\c0\c84706;\cssrgb\c75294\c75294\c75294;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b\fs24 \cf0 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Registration\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/register
+\f1\fs24 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Payload:\
+\{\
+    "name": "John Doe",\
+    "email": "john@example.com",\
+    "password": "password",\
+    "password_confirmation": "password",\
+    "user_type": "investor" // or "startup"\
+\}\
+\
+\
+Response:\
+\{\
+    "access_token": "token_value",\
+    "token_type": "Bearer"\
+\}\
+===================================================================================\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b \cf0 \strokec2 Login\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/login
+\f1\fs24 \
+
+\f0\b Payload:
+\f1\b0 \
+\{\
+    "email": "john@example.com",\
+    "password": "password"\
+\}\
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Response:\{\
+    "access_token": "token_value",\
+    "token_type": "Bearer"\
+\}\
+====================================================================================\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b \cf0 \strokec2 Investor Endpoints\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Get Investors
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 GET /api/investors
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Authorization: Bearer <access_token>\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 Response:\
+[\
+    \{\
+        "id": 1,\
+        "name": "Jane Doe",\
+        "email": "jane@example.com",\
+        "investment_amount": 50000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+]\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 =====================================================================================\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b \cf0 \strokec2 Create Investor
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/investors
+\f1\fs24 \
+
+\f0\b Headers:\
+Authorization: Bearer <access_token>\
+\pard\pardeftab720\partightenfactor0
+
+\f1\b0 \cf0 \strokec2 Payload:\
+\{\
+    "name": "Jane Doe",\
+    "email": "jane@example.com",\
+    "investment_amount": 50000\
+\}\
+\
+Response:\
+\
+\
+\
+\{\
+    "message": "Investor created successfully",\
+    "investor": \{\
+        "id": 1,\
+        "name": "Jane Doe",\
+        "email": "jane@example.com",\
+        "investment_amount": 50000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+\}\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \outl0\strokewidth0 =====================================================================================\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 \strokec2 To create a comprehensive set of APIs in your Laravel project that includes registration, login, managing startups and investors, and adding investments, investment rounds, and companies, follow these steps. We will create separate controllers for each major functionality and set up the necessary routes and models.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f0\b\fs28 \cf0 \strokec2 Step 1: Set Up Routes\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \strokec2 In the 
+\f2\fs26 routes/api.php
+\f1\fs24  file, define the routes for all functionalities.\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+use App\\Http\\Controllers\\Auth\\RegisterController;\
+use App\\Http\\Controllers\\Auth\\LoginController;\
+use App\\Http\\Controllers\\InvestorController;\
+use App\\Http\\Controllers\\StartupController;\
+use App\\Http\\Controllers\\InvestmentController;\
+use App\\Http\\Controllers\\InvestmentRoundController;\
+use App\\Http\\Controllers\\CompanyController;\
+\
+Route::post('register', [RegisterController::class, 'register']);\
+Route::post('login', [LoginController::class, 'login']);\
+\
+// Protected routes for authenticated users\
+Route::middleware('auth:sanctum')->group(function () \{\
+    // Investor routes\
+    Route::get('investors', [InvestorController::class, 'index']);\
+    Route::post('investors', [InvestorController::class, 'store']);\
+    Route::put('investors/\{id\}', [InvestorController::class, 'update']);\
+    \
+    // Startup routes\
+    Route::get('startups', [StartupController::class, 'index']);\
+    Route::post('startups', [StartupController::class, 'store']);\
+    Route::put('startups/\{id\}', [StartupController::class, 'update']);\
+    \
+    // Investment routes\
+    Route::post('investments', [InvestmentController::class, 'store']);\
+    \
+    // Investment round routes\
+    Route::get('investment-rounds', [InvestmentRoundController::class, 'index']);\
+    Route::post('investment-rounds', [InvestmentRoundController::class, 'store']);\
+    \
+    // Company routes\
+    Route::get('companies', [CompanyController::class, 'index']);\
+    Route::post('companies', [CompanyController::class, 'store']);\
+    Route::put('companies/\{id\}', [CompanyController::class, 'update']);\
+\});\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f0\b\fs28 \cf0 Step 2: Create Controllers\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \strokec2 Create controllers for each functionality. Here are the essential methods and routes.\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b \cf0 RegisterController.php\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Http\\Controllers\\Auth;\
+\
+use App\\Http\\Controllers\\Controller;\
+use App\\Models\\User;\
+use Illuminate\\Http\\Request;\
+use Illuminate\\Support\\Facades\\Hash;\
+use Illuminate\\Support\\Facades\\Validator;\
+\
+class RegisterController extends Controller\
+\{\
+    public function register(Request $request)\
+    \{\
+        $validator = Validator::make($request->all(), [\
+            'name' => ['required', 'string', 'max:255'],\
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],\
+            'password' => ['required', 'string', 'min:8', 'confirmed'],\
+            'user_type' => ['required', 'string', 'in:investor,startup'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        $user = User::create([\
+            'name' => $request->name,\
+            'email' => $request->email,\
+            'password' => Hash::make($request->password),\
+            'user_type' => $request->user_type,\
+        ]);\
+\
+        $token = $user->createToken('auth_token')->plainTextToken;\
+\
+        return response()->json(['access_token' => $token, 'token_type' => 'Bearer'], 201);\
+    \}\
+\}\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 LoginController.php\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Http\\Controllers\\Auth;\
+\
+use App\\Http\\Controllers\\Controller;\
+use Illuminate\\Http\\Request;\
+use Illuminate\\Support\\Facades\\Auth;\
+use Illuminate\\Support\\Facades\\Validator;\
+\
+class LoginController extends Controller\
+\{\
+    public function login(Request $request)\
+    \{\
+        $validator = Validator::make($request->all(), [\
+            'email' => ['required', 'string', 'email', 'max:255'],\
+            'password' => ['required', 'string', 'min:8'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        if (!Auth::attempt($request->only('email', 'password'))) \{\
+            return response()->json(['message' => 'Invalid credentials'], 401);\
+        \}\
+\
+        $user = Auth::user();\
+        $token = $user->createToken('auth_token')->plainTextToken;\
+\
+        return response()->json(['access_token' => $token, 'token_type' => 'Bearer'], 200);\
+    \}\
+\}\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 InvestorController.php\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Http\\Controllers;\
+\
+use App\\Models\\Investor;\
+use Illuminate\\Http\\Request;\
+use Illuminate\\Support\\Facades\\Validator;\
+\
+class InvestorController extends Controller\
+\{\
+    public function index()\
+    \{\
+        $investors = Investor::all();\
+        return response()->json($investors);\
+    \}\
+\
+    public function store(Request $request)\
+    \{\
+        $validator = Validator::make($request->all(), [\
+            'name' => ['required', 'string', 'max:255'],\
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:investors'],\
+            'investment_amount' => ['required', 'numeric'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        $investor = Investor::create($request->all());\
+        return response()->json(['message' => 'Investor created successfully', 'investor' => $investor], 201);\
+    \}\
+\
+    public function update(Request $request, $id)\
+    \{\
+        $investor = Investor::findOrFail($id);\
+\
+        $validator = Validator::make($request->all(), [\
+            'name' => ['required', 'string', 'max:255'],\
+            'email' => ['required', 'string', 'email', 'max:255'],\
+            'investment_amount' => ['required', 'numeric'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        $investor->update($request->all());\
+        return response()->json(['message' => 'Investor updated successfully', 'investor' => $investor]);\
+    \}\
+\}\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 StartupController.php\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Http\\Controllers;\
+\
+use App\\Models\\Startup;\
+use Illuminate\\Http\\Request;\
+use Illuminate\\Support\\Facades\\Validator;\
+\
+class StartupController extends Controller\
+\{\
+    public function index()\
+    \{\
+        $startups = Startup::all();\
+        return response()->json($startups);\
+    \}\
+\
+    public function store(Request $request)\
+    \{\
+        $validator = Validator::make($request->all(), [\
+            'name' => ['required', 'string', 'max:255'],\
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:startups'],\
+            'funding_goal' => ['required', 'numeric'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        $startup = Startup::create($request->all());\
+        return response()->json(['message' => 'Startup created successfully', 'startup' => $startup], 201);\
+    \}\
+\
+    public function update(Request $request, $id)\
+    \{\
+        $startup = Startup::findOrFail($id);\
+\
+        $validator = Validator::make($request->all(), [\
+            'name' => ['required', 'string', 'max:255'],\
+            'email' => ['required', 'string', 'email', 'max:255'],\
+            'funding_goal' => ['required', 'numeric'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        $startup->update($request->all());\
+        return response()->json(['message' => 'Startup updated successfully', 'startup' => $startup]);\
+    \}\
+\}\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 InvestmentController.php\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Http\\Controllers;\
+\
+use App\\Models\\Investment;\
+use Illuminate\\Http\\Request;\
+use Illuminate\\Support\\Facades\\Validator;\
+\
+class InvestmentController extends Controller\
+\{\
+    public function store(Request $request)\
+    \{\
+        $validator = Validator::make($request->all(), [\
+            'investor_id' => ['required', 'exists:investors,id'],\
+            'startup_id' => ['required', 'exists:startups,id'],\
+            'amount' => ['required', 'numeric'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        $investment = Investment::create($request->all());\
+        return response()->json(['message' => 'Investment created successfully', 'investment' => $investment], 201);\
+    \}\
+\}\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 InvestmentRoundController.php\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Http\\Controllers;\
+\
+use App\\Models\\InvestmentRound;\
+use Illuminate\\Http\\Request;\
+use Illuminate\\Support\\Facades\\Validator;\
+\
+class InvestmentRoundController extends Controller\
+\{\
+    public function index()\
+    \{\
+        $investmentRounds = InvestmentRound::all();\
+        return response()->json($investmentRounds);\
+    \}\
+\
+    public function store(Request $request)\
+    \{\
+        $validator = Validator::make($request->all(), [\
+            'name' => ['required', 'string', 'max:255'],\
+            'goal_amount' => ['required', 'numeric'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        $investmentRound = InvestmentRound::create($request->all());\
+        return response()->json(['message' => 'Investment round created successfully', 'investmentRound' => $investmentRound], 201);\
+    \}\
+\}\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 CompanyController.php\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Http\\Controllers;\
+\
+use App\\Models\\Company;\
+use Illuminate\\Http\\Request;\
+use Illuminate\\Support\\Facades\\Validator;\
+\
+class CompanyController extends Controller\
+\{\
+    public function index()\
+    \{\
+        $companies = Company::all();\
+        return response()->json($companies);\
+    \}\
+\
+    public function store(Request $request)\
+    \{\
+        $validator = Validator::make($request->all(), [\
+            'name' => ['required', 'string', 'max:255'],\
+            'industry' => ['required', 'string', 'max:255'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        $company = Company::create($request->all());\
+        return response()->json(['message' => 'Company created successfully', 'company' => $company], 201);\
+    \}\
+\
+    public function update(Request $request, $id)\
+    \{\
+        $company = Company::findOrFail($id);\
+\
+        $validator = Validator::make($request->all(), [\
+            'name' => ['required', 'string', 'max:255'],\
+            'industry' => ['required', 'string', 'max:255'],\
+        ]);\
+\
+        if ($validator->fails()) \{\
+            return response()->json(['errors' => $validator->errors()], 422);\
+        \}\
+\
+        $company->update($request->all());\
+        return response()->json(['message' => 'Company updated successfully', 'company' => $company]);\
+    \}\
+\}\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f0\b\fs28 \cf0 Step 3: Create Models and Migrations\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \strokec2 Create models and migrations for 
+\f2\fs26 Investor
+\f1\fs24 , 
+\f2\fs26 Startup
+\f1\fs24 , 
+\f2\fs26 Investment
+\f1\fs24 , 
+\f2\fs26 InvestmentRound
+\f1\fs24 , and 
+\f2\fs26 Company
+\f1\fs24 .\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b \cf0 Create Migration\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0 \cf0 Generate migrations for each model:\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 bash\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+php artisan make:migration create_investors_table\
+php artisan make:migration create_startups_table\
+php artisan make:migration create_investments_table\
+php artisan make:migration create_investment_rounds_table\
+php artisan make:migration create_companies_table\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\fs24 \cf0 \strokec2 Define the structure of each table in the respective migration files:\
+
+\f0\b Investors Table:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+public function up()\
+\{\
+    Schema::create('investors', function (Blueprint $table) \{\
+        $table->id();\
+        $table->string('name');\
+        $table->string('email')->unique();\
+        $table->decimal('investment_amount', 15, 2);\
+        $table->timestamps();\
+    \});\
+\}\
+\
+public function down()\
+\{\
+    Schema::dropIfExists('investors');\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Startups Table:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+public function up()\
+\{\
+    Schema::create('startups', function (Blueprint $table) \{\
+        $table->id();\
+        $table->string('name');\
+        $table->string('email')->unique();\
+        $table->decimal('funding_goal', 15, 2);\
+        $table->timestamps();\
+    \});\
+\}\
+\
+public function down()\
+\{\
+    Schema::dropIfExists('startups');\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Investments Table:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+public function up()\
+\{\
+    Schema::create('investments', function (Blueprint $table) \{\
+        $table->id();\
+        $table->foreignId('investor_id')->constrained();\
+        $table->foreignId('startup_id')->constrained();\
+        $table->decimal('amount', 15, 2);\
+        $table->timestamps();\
+    \});\
+\}\
+\
+public function down()\
+\{\
+    Schema::dropIfExists('investments');\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Investment Rounds Table:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+public function up()\
+\{\
+    Schema::create('investment_rounds', function (Blueprint $table) \{\
+        $table->id();\
+        $table->string('name');\
+        $table->decimal('goal_amount', 15, 2);\
+        $table->timestamps();\
+    \});\
+\}\
+\
+public function down()\
+\{\
+    Schema::dropIfExists('investment_rounds');\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Companies Table:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+public function up()\
+\{\
+    Schema::create('companies', function (Blueprint $table) \{\
+        $table->id();\
+        $table->string('name');\
+        $table->string('industry');\
+        $table->timestamps();\
+    \});\
+\}\
+\
+public function down()\
+\{\
+    Schema::dropIfExists('companies');\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\fs24 \cf0 \strokec2 Run the migrations:\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 bash\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+php artisan migrate\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f0\b\fs28 \cf0 Step 4: Create Models\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \strokec2 Create models for each table:\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 bash\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+php artisan make:model Investor\
+php artisan make:model Startup\
+php artisan make:model Investment\
+php artisan make:model InvestmentRound\
+php artisan make:model Company\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\fs24 \cf0 \strokec2 Define the fillable properties in each model:\
+
+\f0\b Investor.php:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Models;\
+\
+use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;\
+use Illuminate\\Database\\Eloquent\\Model;\
+\
+class Investor extends Model\
+\{\
+    use HasFactory;\
+\
+    protected $fillable = [\
+        'name',\
+        'email',\
+        'investment_amount',\
+    ];\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Startup.php:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Models;\
+\
+use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;\
+use Illuminate\\Database\\Eloquent\\Model;\
+\
+class Startup extends Model\
+\{\
+    use HasFactory;\
+\
+    protected $fillable = [\
+        'name',\
+        'email',\
+        'funding_goal',\
+    ];\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Investment.php:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Models;\
+\
+use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;\
+use Illuminate\\Database\\Eloquent\\Model;\
+\
+class Investment extends Model\
+\{\
+    use HasFactory;\
+\
+    protected $fillable = [\
+        'investor_id',\
+        'startup_id',\
+        'amount',\
+    ];\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 InvestmentRound.php:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Models;\
+\
+use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;\
+use Illuminate\\Database\\Eloquent\\Model;\
+\
+class InvestmentRound extends Model\
+\{\
+    use HasFactory;\
+\
+    protected $fillable = [\
+        'name',\
+        'goal_amount',\
+    ];\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Company.php:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+namespace App\\Models;\
+\
+use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;\
+use Illuminate\\Database\\Eloquent\\Model;\
+\
+class Company extends Model\
+\{\
+    use HasFactory;\
+\
+    protected $fillable = [\
+        'name',\
+        'industry',\
+    ];\
+\}\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f0\b\fs28 \cf0 Step 5: Protect Routes Using Sanctum\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \strokec2 Install and set up Laravel Sanctum for API token authentication.\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 bash\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+composer require laravel/sanctum\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\fs24 \cf0 \strokec2 Add Sanctum's middleware to your 
+\f2\fs26 api
+\f1\fs24  middleware group within 
+\f2\fs26 app/Http/Kernel.php
+\f1\fs24 :\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 php\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+use Laravel\\Sanctum\\Http\\Middleware\\EnsureFrontendRequestsAreStateful;\
+\
+protected $middlewareGroups = [\
+    'api' => [\
+        EnsureFrontendRequestsAreStateful::class,\
+        'throttle:api',\
+        \\Illuminate\\Routing\\Middleware\\SubstituteBindings::class,\
+    ],\
+];\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\fs24 \cf0 \strokec2 Publish Sanctum's configuration:\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 bash\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+php artisan vendor:publish --provider="Laravel\\Sanctum\\SanctumServiceProvider"\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\fs24 \cf0 \strokec2 Run the Sanctum migrations:\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 bash\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+php artisan migrate\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f0\b\fs28 \cf0 Step 6: Test the Implementation\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \strokec2 Use tools like Postman or Insomnia to test your API endpoints.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f0\b\fs28 \cf0 \strokec2 Step 7: Provide API Documentation\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \strokec2 Document your API for the Flutter developer. Here\'92s a sample documentation:\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b \cf0 Registration\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/register
+\f1\fs24 \
+
+\f0\b Payload:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 json\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+\{\
+    "name": "John Doe",\
+    "email": "john@example.com",\
+    "password": "password",\
+    "password_confirmation": "password",\
+    "user_type": "investor" // or "startup"\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Response:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 json\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+\{\
+    "access_token": "token_value",\
+    "token_type": "Bearer"\
+\}\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Login\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/login
+\f1\fs24 \
+
+\f0\b Payload:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 json\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+\{\
+    "email": "john@example.com",\
+    "password": "password"\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Response:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 json\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+\{\
+    "access_token": "token_value",\
+    "token_type": "Bearer"\
+\}\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Investor Endpoints\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Get Investors
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 GET /api/investors
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 makefile\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+Authorization: Bearer <access_token>\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Response:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 json\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+[\
+    \{\
+        "id": 1,\
+        "name": "Jane Doe",\
+        "email": "jane@example.com",\
+        "investment_amount": 50000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+]\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Create Investor
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/investors
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 makefile\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+Authorization: Bearer <access_token>\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Payload:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 json\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+\{\
+    "name": "Jane Doe",\
+    "email": "jane@example.com",\
+    "investment_amount": 50000\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Response:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 json\
+
+\f3\fs22 \cf3 \cb4 \strokec3 Copy code
+\f2\fs26 \cf0 \cb1 \strokec2 \
+\{\
+    "message": "Investor created successfully",\
+    "investor": \{\
+        "id": 1,\
+        "name": "Jane Doe",\
+        "email": "jane@example.com",\
+        "investment_amount": 50000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+\}\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b\fs24 \cf0 \strokec2 Update Investor
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 PUT /api/investors/\{id\}
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Authorization: Bearer <access_token>\
+\pard\pardeftab720\partightenfactor0
+\cf0 Payload:\
+\{\
+    "name": "Jane Doe",\
+    "email": "jane@example.com",\
+    "investment_amount": 60000\
+\}\
+Response:\
+\
+\{\
+    "message": "Investor updated successfully",\
+    "investor": \{\
+        "id": 1,\
+        "name": "Jane Doe",\
+        "email": "jane@example.com",\
+        "investment_amount": 60000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+\}\
+=====================================================================================\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b \cf0 \strokec2 Startup Endpoints\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Get Startups
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 GET /api/startups
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Authorization: Bearer <access_token>\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 Response:\
+[\
+    \{\
+        "id": 1,\
+        "name": "Tech Startup",\
+        "email": "tech@example.com",\
+        "funding_goal": 1000000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+]\
+===================================================================================\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b \cf0 \strokec2 Create Startup
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/startups
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Authorization: Bearer <access_token>\
+Payload:\
+\{\
+    "name": "Tech Startup",\
+    "email": "tech@example.com",\
+    "funding_goal": 1000000\
+\}\
+\
+\
+Response:\
+\
+\{\
+    "message": "Startup created successfully",\
+    "startup": \{\
+        "id": 1,\
+        "name": "Tech Startup",\
+        "email": "tech@example.com",\
+        "funding_goal": 1000000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+\}\
+=====================================================================================\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b \cf0 \strokec2 Update Startup
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 PUT /api/startups/\{id\}
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Authorization: Bearer <access_token>\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 Payload:\
+\{\
+    "name": "Tech Startup",\
+    "email": "tech@example.com",\
+    "funding_goal": 1500000\
+\}\
+Response:\
+\{\
+    "message": "Startup updated successfully",\
+    "startup": \{\
+        "id": 1,\
+        "name": "Tech Startup",\
+        "email": "tech@example.com",\
+        "funding_goal": 1500000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+\}\
+====================================================================================\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b \cf0 \strokec2 Investment Endpoints\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Create Investment
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/investments
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Authorization: Bearer <access_token>\
+\
+\
+Payload:\
+\pard\pardeftab720\partightenfactor0
+\cf0 \{\
+    "investor_id": 1,\
+    "startup_id": 1,\
+    "amount": 50000\
+\}\
+\pard\pardeftab720\partightenfactor0
+\cf0 Response:\
+\{\
+    "message": "Investment created successfully",\
+    "investment": \{\
+        "id": 1,\
+        "investor_id": 1,\
+        "startup_id": 1,\
+        "amount": 50000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+\}\
+====================================================================================\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b \cf0 \strokec2 Investment Round Endpoints\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Get Investment Rounds
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 GET /api/investment-rounds
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Authorization: Bearer <access_token>\
+Response:\
+[\
+    \{\
+        "id": 1,\
+        "name": "Seed Round",\
+        "goal_amount": 200000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+]\
+===================================================================================\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b \cf0 \strokec2 Create Investment Round
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/investment-rounds
+\f1\fs24 \
+
+\f0\b Headers:\
+Authorization: Bearer <access_token>\
+\{\
+    "name": "Seed Round",\
+    "goal_amount": 200000\
+\}\
+\pard\pardeftab720\partightenfactor0
+
+\f1\b0 \cf0 \strokec2 Response:\{\
+    "message": "Investment round created successfully",\
+    "investmentRound": \{\
+        "id": 1,\
+        "name": "Seed Round",\
+        "goal_amount": 200000,\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+\}\
+=================================================================================\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\b \cf0 \strokec2 Company Endpoints\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 Get Companies
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 GET /api/companies
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Authorization: Bearer <access_token>\
+\
+\
+Response:\
+\
+[\
+\
+\
+\
+    \{\
+        "id": 1,\
+        "name": "Innovative Tech",\
+        "industry": "Technology",\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+]\
+===================================================================================\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b \cf0 \strokec2 Create Company
+\f1\b0 \
+
+\f0\b Endpoint:
+\f1\b0  
+\f2\fs26 POST /api/companies
+\f1\fs24 \
+
+\f0\b Headers:
+\f1\b0 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 Authorization: Bearer <access_token>\
+Payload:\
+\{\
+    "name": "Innovative Tech",\
+    "industry": "Technology"\
+\}\
+Response:\
+\{\
+    "message": "Company created successfully",\
+    "company": \{\
+        "id": 1,\
+        "name": "Innovative Tech",\
+        "industry": "Technology",\
+        "created_at": "2024-06-29T00:00:00.000000Z",\
+        "updated_at": "2024-06-29T00:00:00.000000Z"\
+    \}\
+\}\
+====================================================================================\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs26 \cf0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs24 \cf0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\
+\
+\
+\
+\
+\
+\
+\
+}
